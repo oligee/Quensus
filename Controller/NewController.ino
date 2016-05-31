@@ -18,6 +18,16 @@ void setup(){
   Serial.println("STARTED");
   Serial.flush();
   messageController.setup();
+  //sleep mode stuff
+  pinMode(4,OUTPUT);           // hardwired XinoRF / RFu328 SRF sleep pin
+  digitalWrite(4,LOW);          // pull sleep pin high - sleep 2 disabled
+  Serial.print("+++");            // enter AT command mode
+  delay(1500);                   // delay 1.5s
+  Serial.println("ATSM2");         // enable sleep mode 2 <0.5uA
+  delay(2000);
+  Serial.println("ATDN");          // exit AT command mode*/
+  delay(2000);
+  //done
 }
 void loop(){
   //Check for message
@@ -29,6 +39,7 @@ void loop(){
   }
   //delay to prevent to create refresh time and prevent uneeded amount work
   delay(100);
+//sleepController();
 }
 bool talkCheck() {
   //test if we can talk
@@ -43,4 +54,14 @@ bool talkCheck() {
     //let the loops know we did not talk and so we should listern instead
     return false;
   }
+}
+void sleepController(){
+    delay(10);                    // allow radio to finish sending
+    //Serial.println();
+    digitalWrite(6, LOW);
+    digitalWrite(4, HIGH);        // pull sleep pin high to enter SRF sleep 2
+    LLAP.sleepForaWhile(80);
+    digitalWrite(4, LOW);
+     digitalWrite(6, HIGH);
+    delay(10);                    // allow radio to wake up
 }
